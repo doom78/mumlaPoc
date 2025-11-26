@@ -173,6 +173,9 @@ public class Settings {
     public static final String PREF_START_UP_IN_PINNED_MODE = "startUpInPinnedMode";
     public static final boolean DEFAULT_START_UP_IN_PINNED_MODE = false;
 
+    public static final String PREF_POC_MODE = "poc_mode";
+    public static final boolean DEFAULT_POC_MODE = false;
+
     static {
         ARRAY_INPUT_METHODS = new HashSet<String>();
         ARRAY_INPUT_METHODS.add(ARRAY_INPUT_METHOD_VOICE);
@@ -477,5 +480,12 @@ public class Settings {
 
     public boolean shouldStartUpInPinnedMode() {
         return preferences.getBoolean(PREF_START_UP_IN_PINNED_MODE, DEFAULT_START_UP_IN_PINNED_MODE);
+    }
+
+    /**
+     * @return true if the minimalist PoC mode is enabled.
+     */
+    public boolean isPocMode() {
+        return preferences.getBoolean(PREF_POC_MODE, DEFAULT_POC_MODE);
     }
 }
