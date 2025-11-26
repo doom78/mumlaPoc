@@ -6,10 +6,10 @@ on:
       # - main # Esegui il workflow ogni volta che viene fatto un push sul branch 'main'
       # - your_feature_branch # Puoi aggiungere anche altri branch se vuoi testare le build delle tue feature
 
-  #pull_request:
-   # branches:
+  pull_request:
+    branches:
       # - main # Esegui il workflow quando una pull request è aperta/aggiornata sul branch 'main'
-
+      - prototype 
   workflow_dispatch: # Permette di avviare il workflow manualmente dalla pagina Actions di GitHub
 
 jobs:
