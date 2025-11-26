@@ -261,11 +261,22 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         mSettings = Settings.getInstance(this);
-        setTheme(mSettings.getTheme());
 
+        if (mSettings.isPocMode()) {
+                // Assumiamo che tu abbia creato R.style.Theme_Mumla_Minimal
+                setTheme(R.style.Theme_Mumla_Poc); 
+        } else {
+                setTheme(mSettings.getTheme());
+        }
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
+        
+        if (mSettings.isPocMode()) {
+                // Assumiamo che tu abbia creato R.layout.activity_main_poc (senza Drawer)
+                setContentView(R.layout.activity_main_poc); 
+        } else {
+                setContentView(R.layout.activity_main);
+        }
+        
         setStayAwake(mSettings.shouldStayAwake());
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -275,11 +286,24 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
         mDatabase.open();
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
-        mDrawerList.setOnItemClickListener(this);
-        mDrawerAdapter = new DrawerAdapter(this, this);
-        mDrawerList.setAdapter(mDrawerAdapter);
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close) {
+
+        if (mDrawerLayout != null) { 
+                mDrawerList = (ListView) findViewById(R.id.left_drawer);
+                mDrawerList.setOnItemClickListener(this);
+
+                mDrawerAdapter = new DrawerAdapter(this, this);
+                mDrawerList.setAdapter(mDrawerAdapter);
+
+                mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close) {
+            // ... (logica onDrawerClosed, onDrawerStateChanged, onDrawerOpened rimane invariata)
+                };
+                mDrawerLayout.setDrawerListener(mDrawerToggle);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setHomeButtonEnabled(true);
+        } else {
+        // Se non c'è il Drawer, impostiamo l'oggetto relarivo a null per prevenire NPE in altre funzioni.
+                mDrawerToggle = null; 
+        }
             @Override
             public void onDrawerClosed(View drawerView) {
                 supportInvalidateOptionsMenu();
@@ -355,7 +379,9 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        mDrawerToggle.syncState();
+        if (mDrawerToggle != null) {
+                mDrawerToggle.syncState();
+        }
     }
 
     @Override
@@ -432,7 +458,9 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
+        if (mDrawerToggle != null) {
+                mDrawerToggle.onConfigurationChanged(newConfig);
+        }
     }
 
     @Override
@@ -466,7 +494,9 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        mDrawerLayout.closeDrawers();
+        if (mDrawerLayout != null) {
+                mDrawerLayout.closeDrawers();
+        }
         loadDrawerFragment((int) id);
     }
 
