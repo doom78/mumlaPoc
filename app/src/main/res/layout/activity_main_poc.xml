@@ -6,11 +6,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="100" 
-    android:background="?attr/colorBackground"
+    android:background="?colorPrimaryDark"
     tools:context="se.lublin.mumla.app.MumlaActivity">
 
     <LinearLayout
-        android:id="@+id/status_fascia"
+        android:id="@+id/status_block"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="10"
@@ -23,7 +23,7 @@
             android:id="@+id/connectionStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/status_disconnected" 
+            android:text="Status Load" 
             android:textColor="@android:color/white"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -31,7 +31,7 @@
     </LinearLayout>
 
     <RelativeLayout 
-        android:id="@+id/desk_fascia"
+        android:id="@+id/desk_block"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="75"
@@ -43,9 +43,9 @@
             android:layout_width="250dp"
             android:layout_height="250dp"
             android:layout_centerInParent="true"
-            android:background="@drawable/ptt_button_minimal_selector" 
-            android:contentDescription="@string/push_to_talk"
-            android:src="@drawable/ic_mic_white_48dp" 
+            android:background="?colorPrimaryDark" 
+            android:contentDescription="Ptt"
+            android:src="@drawable/ic_action_microphone" 
             android:scaleType="fitCenter" />
             
         <TextView
@@ -55,14 +55,14 @@
             android:layout_above="@id/pttButton"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="24dp"
-            android:text="@string/channel_not_joined" 
+            android:text="Altro!!" 
             android:textColor="@android:color/darker_gray"
             android:textSize="18sp" />
 
     </RelativeLayout>
 
     <LinearLayout
-        android:id="@+id/comandi_fascia"
+        android:id="@+id/command_block"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="15"
