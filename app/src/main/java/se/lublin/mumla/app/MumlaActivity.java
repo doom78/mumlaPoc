@@ -712,6 +712,33 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
         }
         return false;
     }
+
+/**
+     * Gestisce il cambio di stato della CheckBox POC Mode nel layout minimalista.
+     * Se l'utente disattiva la checkbox, disabilita la modalità PoC nelle impostazioni
+     * e ricrea l'Activity per caricare il layout normale.
+     */
+    public void onPocModeToggleChanged(View view) {
+        boolean isChecked = ((android.widget.CheckBox) view).isChecked();
+        
+        // Agiamo solo quando la checkbox viene DISATTIVATA (unchecked),
+        // perché è l'azione che ci fa uscire dalla modalità PoC.
+        if (!isChecked) { 
+            // 1. Disabilita la PoC Mode nelle impostazioni
+            mSettings.setPocMode(false);
+            
+            // 2. Disconnetti se connesso (pratica pulita prima di cambiare layout)
+            if(mService != null && mService.isConnected()) {
+                 mService.disconnect();
+            }
+            
+            // 3. Riavvia l'attività per caricare il tema e il layout normale (activity_main)
+            recreate(); 
+        }
+        // Se l'utente tenta di attivarla (isChecked == true) non facciamo nulla,
+        // in quanto l'activity è già in modalità PoC.
+    }
+
     public void connectToPublicServer(final PublicServer server) {
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
 
