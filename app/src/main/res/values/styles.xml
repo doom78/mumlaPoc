@@ -54,9 +54,7 @@
     <style name="Theme.Mumla.Dark.CardView" parent="CardView">
         <item name="cardBackgroundColor">#333</item>
     </style>
-
-  <resources>
-
+  
     <style name="Theme.Mumla.Poc" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -70,8 +68,5 @@
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorSecondary">@android:color/darker_gray</item>
     </style>
-
-</resources>
-  
-
+    
 </resources>
