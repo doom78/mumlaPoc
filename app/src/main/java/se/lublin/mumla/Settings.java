@@ -489,8 +489,8 @@ public class Settings {
         return preferences.getBoolean(PREF_POC_MODE, DEFAULT_POC_MODE);
     }
     public void setPocMode(boolean pocMode) {
-        SharedPreferences.Editor editor = mPreferences.edit();
-        editor.putBoolean(KEY_POC_MODE, pocMode);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(PREF_POC_MODE, pocMode);
         editor.apply();
     }
     
