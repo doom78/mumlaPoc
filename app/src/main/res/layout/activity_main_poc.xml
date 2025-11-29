@@ -78,7 +78,6 @@
             android:layout_height="wrap_content"
             android:text="POC Mode Attiva"
             android:textColor="@android:color/white"
-            android:onCheckedChanged="onPocModeToggleChanged" 
             android:checked="true"/>
             
         </LinearLayout>
