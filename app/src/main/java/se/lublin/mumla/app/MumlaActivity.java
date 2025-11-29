@@ -141,7 +141,7 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
             mService.setSuppressNotifications(true);
             mService.registerObserver(mObserver);
             mService.clearChatNotifications(); // Clear chat notifications on resume.
-            mDrawerAdapter.notifyDataSetChanged();
+            if (mDrawerAdapter != null) mDrawerAdapter.notifyDataSetChanged();
 
             for(HumlaServiceFragment fragment : mServiceFragments)
                 fragment.setServiceBound(true);
@@ -169,7 +169,7 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
                 loadDrawerFragment(DrawerAdapter.ITEM_SERVER);
             }
 
-            mDrawerAdapter.notifyDataSetChanged();
+            if (mDrawerAdapter != null) mDrawerAdapter.notifyDataSetChanged();
             supportInvalidateOptionsMenu();
 
             updateConnectionState(getService());
@@ -186,7 +186,7 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
             if(getSupportFragmentManager().findFragmentById(R.id.content_frame) instanceof HumlaServiceFragment) {
                 loadDrawerFragment(DrawerAdapter.ITEM_FAVOURITES);
             }
-            mDrawerAdapter.notifyDataSetChanged();
+            if (mDrawerAdapter != null) mDrawerAdapter.notifyDataSetChanged();
             supportInvalidateOptionsMenu();
 
             updateConnectionState(getService());
@@ -261,10 +261,32 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         mSettings = Settings.getInstance(this);
-        setTheme(mSettings.getTheme());
 
+        if (mSettings.isPocMode()) {
+                // Assumiamo che tu abbia creato R.style.Theme_Mumla_Minimal
+                setTheme(R.style.Theme_Mumla_Poc);
+        } else {
+                setTheme(mSettings.getTheme());
+        }
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+
+        if (mSettings.isPocMode()) {
+                // Assumiamo che tu abbia creato R.layout.activity_main_poc (senza Drawer)
+                setContentView(R.layout.activity_main_poc);
+                // Inizializzazione Listener per la CheckBox PoC Mode (per uscire dalla modalità)
+                final android.widget.CheckBox pocToggle = (android.widget.CheckBox) findViewById(R.id.pocModeToggleCheckbox);
+                if (pocToggle != null) {
+                    pocToggle.setOnCheckedChangeListener(new android.widget.CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(android.widget.CompoundButton buttonView, boolean isChecked) {
+                            // Chiamiamo il metodo che gestisce la logica di uscita
+                            onPocModeToggleChanged(buttonView);
+                        }
+                    });
+                }
+        } else {
+                setContentView(R.layout.activity_main);
+        }
 
         setStayAwake(mSettings.shouldStayAwake());
 
@@ -275,37 +297,48 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
         mDatabase.open();
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
-        mDrawerList.setOnItemClickListener(this);
-        mDrawerAdapter = new DrawerAdapter(this, this);
-        mDrawerList.setAdapter(mDrawerAdapter);
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close) {
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                supportInvalidateOptionsMenu();
-            }
 
-            @Override
-            public void onDrawerStateChanged(int newState) {
-                super.onDrawerStateChanged(newState);
-                // Prevent push to talk from getting stuck on when the drawer is opened.
-                if (getService() != null && getService().isConnected()) {
-                    IHumlaSession session = getService().HumlaSession();
-                    if (session.isTalking() && !mSettings.isPushToTalkToggle()) {
-                        session.setTalkingState(false);
+        if (mDrawerLayout != null) {
+                mDrawerList = (ListView) findViewById(R.id.left_drawer);
+                mDrawerList.setOnItemClickListener(this);
+
+                mDrawerAdapter = new DrawerAdapter(this, this);
+                mDrawerList.setAdapter(mDrawerAdapter);
+
+                mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close) {
+                    @Override
+                    public void onDrawerClosed(View drawerView) {
+                        super.onDrawerClosed(drawerView);
+                        supportInvalidateOptionsMenu();
                     }
+
+                    @Override
+                    public void onDrawerStateChanged(int newState) {
+                        super.onDrawerStateChanged(newState);
+                        // Prevent push to talk from getting stuck on when the drawer is opened.
+                        if (getService() != null && getService().isConnected()) {
+                            IHumlaSession session = getService().HumlaSession();
+                            if (session.isTalking() && !mSettings.isPushToTalkToggle()) {
+                                session.setTalkingState(false);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onDrawerOpened(View drawerView) {
+                        super.onDrawerOpened(drawerView);
+                        supportInvalidateOptionsMenu();
+                    }
+                };
+                mDrawerLayout.setDrawerListener(mDrawerToggle);
+                if (getSupportActionBar() != null) {
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                    getSupportActionBar().setHomeButtonEnabled(true);
                 }
-            }
-
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                supportInvalidateOptionsMenu();
-            }
-        };
-
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+        } else {
+            // Se non c'è il Drawer, impostiamo l'oggetto relarivo a null per prevenire NPE in altre funzioni.
+                mDrawerToggle = null;
+        }
 
         AlertDialog.Builder dadb = new AlertDialog.Builder(this);
         dadb.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
@@ -355,7 +388,9 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        mDrawerToggle.syncState();
+        if (mDrawerToggle != null) {
+                mDrawerToggle.syncState();
+        }
     }
 
     @Override
@@ -413,14 +448,14 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu; this adds items to action bar if present.
         getMenuInflater().inflate(R.menu.mumla, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(mDrawerToggle.onOptionsItemSelected(item))
+        if(mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected(item))
             return true;
         if (item.getItemId() == R.id.action_disconnect) {
             getService().disconnect();
@@ -432,7 +467,9 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
+        if (mDrawerToggle != null) {
+                mDrawerToggle.onConfigurationChanged(newConfig);
+        }
     }
 
     @Override
@@ -466,7 +503,9 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        mDrawerLayout.closeDrawers();
+        if (mDrawerLayout != null) {
+                mDrawerLayout.closeDrawers();
+        }
         loadDrawerFragment((int) id);
     }
 
@@ -682,6 +721,33 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
         }
         return false;
     }
+
+/**
+     * Gestisce il cambio di stato della CheckBox POC Mode nel layout minimalista.
+     * Se l'utente disattiva la checkbox, disabilita la modalità PoC nelle impostazioni
+     * e ricrea l'Activity per caricare il layout normale.
+     */
+    public void onPocModeToggleChanged(View view) {
+        boolean isChecked = ((android.widget.CheckBox) view).isChecked();
+
+        // Agiamo solo quando la checkbox viene DISATTIVATA (unchecked),
+        // perché è l'azione che ci fa uscire dalla modalità PoC.
+        if (!isChecked) {
+            // 1. Disabilita la PoC Mode nelle impostazioni
+            mSettings.setPocMode(false);
+
+            // 2. Disconnetti se connesso (pratica pulita prima di cambiare layout)
+            if(mService != null && mService.isConnected()) {
+                 mService.disconnect();
+            }
+
+            // 3. Riavvia l'attività per caricare il tema e il layout normale (activity_main)
+            recreate();
+        }
+        // Se l'utente tenta di attivarla (isChecked == true) non facciamo nulla,
+        // in quanto l'activity è già in modalità PoC.
+    }
+
     public void connectToPublicServer(final PublicServer server) {
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
 

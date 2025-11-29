@@ -22,6 +22,10 @@
     <string name="inputMethodPtt">Push-to-talk</string>
     <string name="inputMethodContinuous">Continuous</string>
 
+    <!-- POC Mode -->
+    <string name="pocMode">PoC Device Mode</string>
+    <string name="pocModeSum">Enable a dedicated user interface for POC devices.</string>
+    
     <!-- Theme names -->
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>

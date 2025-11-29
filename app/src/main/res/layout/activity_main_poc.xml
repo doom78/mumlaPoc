@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="100" 
+    android:background="?colorPrimaryDark"
+    tools:context="se.lublin.mumla.app.MumlaActivity">
+
+    <LinearLayout
+        android:id="@+id/status_block"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="4dp"
+        android:background="#222222"> 
+        
+        <TextView
+            android:id="@+id/connectionStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Status Load" 
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+            
+    </LinearLayout>
+
+    <RelativeLayout 
+        android:id="@+id/desk_block"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="75"
+        android:gravity="center"
+        android:background="@android:color/black"> 
+        
+        <ImageButton
+            android:id="@+id/pttButton"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_centerInParent="true"
+            android:background="?colorPrimaryDark" 
+            android:contentDescription="Ptt"
+            android:src="@drawable/ic_action_microphone" 
+            android:scaleType="fitCenter" />
+            
+        <TextView
+            android:id="@+id/channelName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/pttButton"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="24dp"
+            android:text="Altro!!" 
+            android:textColor="@android:color/darker_gray"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/command_block"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="15"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:background="#333333">
+        
+        <CheckBox
+            android:id="@+id/pocModeToggleCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="POC Mode Attiva"
+            android:textColor="@android:color/white"
+            android:checked="true"/>
+            
+        </LinearLayout>
+
+</LinearLayout>
