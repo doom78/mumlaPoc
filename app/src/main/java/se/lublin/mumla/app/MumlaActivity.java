@@ -272,7 +272,18 @@ public class MumlaActivity extends AppCompatActivity implements ListView.OnItemC
         
         if (mSettings.isPocMode()) {
                 // Assumiamo che tu abbia creato R.layout.activity_main_poc (senza Drawer)
-                setContentView(R.layout.activity_main_poc); 
+                setContentView(R.layout.activity_main_poc);
+                // Inizializzazione Listener per la CheckBox PoC Mode (per uscire dalla modalità)
+                final android.widget.CheckBox pocToggle = (android.widget.CheckBox) findViewById(R.id.pocModeToggleCheckbox);
+                if (pocToggle != null) {
+                    pocToggle.setOnCheckedChangeListener(new android.widget.CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(android.widget.CompoundButton buttonView, boolean isChecked) {
+                            // Chiamiamo il metodo che gestisce la logica di uscita
+                            onPocModeToggleChanged(buttonView); 
+                        }
+                    });
+                }
         } else {
                 setContentView(R.layout.activity_main);
         }
